@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversão Decimal para Binário</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f9; }
+        .card { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 8px; margin-top: 8px; margin-bottom: 12px; box-sizing: border-box; }
+        button { background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        .res { font-weight: bold; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>1. Conversão Decimal para Binário</h2>
+        <input type="number" id="decInput" placeholder="Digite um número decimal">
+        <button onclick="converterBinario()">Converter</button>
+        <div class="res" id="resBinario"></div>
+    </div>
+
+    <script>
+        class Stack {
+            constructor() { this.items = []; }
+            push(el) { this.items.push(el); }
+            pop() { return this.items.pop(); }
+            isEmpty() { return this.items.length === 0; }
+        }
+
+        function converterBinario() {
+            let num = parseInt(document.getElementById('decInput').value);
+            let divRes = document.getElementById('resBinario');
+
+            if (isNaN(num) || num < 0) {
+                divRes.innerText = "Digite um número válido maior ou igual a zero.";
+                return;
+            }
+            if (num === 0) {
+                divRes.innerText = "Binário: 0";
+                return;
+            }
+
+            let pilha = new Stack();
+            let temp = num;
+
+            while (temp > 0) {
+                pilha.push(temp % 2);
+                temp = Math.floor(temp / 2);
+            }
+
+            let binario = "";
+            while (!pilha.isEmpty()) {
+                binario += pilha.pop();
+            }
+
+            divRes.innerText = "Binário: " + binario;
+        }
+    </script>
+</body>
+</html>
