@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fila Estática - Estrutura de Dados</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 0 15px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .controles, .operacoes {
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    input {
+      padding: 8px;
+      font-size: 14px;
+      flex: 1;
+    }
+
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #004c99;
+    }
+
+    .fila-container {
+      display: flex;
+      gap: 10px;
+      min-height: 70px;
+      padding: 15px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .item {
+      border: 2px solid #0066cc;
+      padding: 10px 15px;
+      border-radius: 4px;
+      text-align: center;
+      background-color: #eef6ff;
+      min-width: 50px;
+    }
+
+    .tag {
+      display: block;
+      font-size: 10px;
+      font-weight: bold;
+      color: #d9534f;
+    }
+
+    #resultado {
+      margin-top: 15px;
+      padding: 12px;
+      background-color: #eee;
+      border-left: 4px solid #0066cc;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Simulador de Fila (FIFO)</h1>
+
+  <div class="controles">
+    <input type="text" id="valorInput" placeholder="Digite um valor...">
+    <button onclick="executarEnfileirar()">Enfileirar</button>
+    <button onclick="executarDesenfileirar()">Desenfileirar</button>
+  </div>
+
+
+  <div class="operacoes">
+    <button onclick="executarPeek()">Peek</button>
+    <button onclick="executarFront()">Front</button>
+    <button onclick="executarRear()">Rear</button>
+    <button onclick="executarSize()">Size</button>
+    <button onclick="executarIsEmpty()">isEmpty</button>
+    <button onclick="executarPrint()">Print</button>
+  </div>
+
+  <h3>Fila (Máx: 8 elementos):</h3>
+  <div id="filaVisual" class="fila-container"></div>
+
+  <div id="resultado">Resultado aparecerá aqui...</div>
+
+  <script>
+    class Fila {
+      constructor(capacidade = 8) {
+        this.itens = [];
+        this.capacidade = capacidade;
+      }
+
+      enfileirar(elemento) {
+        if (this.itens.length >= this.capacidade) {
+          return false; // Fila cheia (Overflow)
+        }
+        this.itens.push(elemento);
+        return true;
+      }
+
+      desenfileirar() {
+        if (this.isEmpty()) {
+          return null; 
+        }
+        return this.itens.shift();
+      }
+      peek() {
+        return this.isEmpty() ? null : this.itens[0];
+      }
+      front() {
+        return this.isEmpty() ? null : this.itens[0];
+      }
+      rear() {
+        return this.isEmpty() ? null : this.itens[this.itens.length - 1];
+      }
+      size() {
+        return this.itens.length;
+      }
+
+      isEmpty() {
+        return this.itens.length === 0;
+      }
+      print() {
+        if (this.isEmpty()) {
+          return "Fila vazia";
+        }
+        return this.itens.join(" -> ");
+      }
+    }
+
+   
+    const fila = new Fila(8);
+    const filaVisual = document.getElementById("filaVisual");
+    const resultado = document.getElementById("resultado");
+    const valorInput = document.getElementById("valorInput");
+
+    function atualizarTela() {
+      filaVisual.innerHTML = "";
+
+      if (fila.isEmpty()) {
+        filaVisual.innerHTML = "<span>A fila está vazia.</span>";
+        return;
+      }
+
+      fila.itens.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        let etiqueta = "";
+        if (index === 0) etiqueta += "FRONT ";
+        if (index === fila.size() - 1) etiqueta += "REAR";
+
+        div.innerHTML = `<span class="tag">${etiqueta}</span><strong>${item}</strong>`;
+        filaVisual.appendChild(div);
+      });
+    }
+
+
+    function executarEnfileirar() {
+      const valor = valorInput.value.trim();
+      if (valor === "") {
+        resultado.textContent = "Digite um valor antes de enfileirar.";
+        return;
+      }
+
+      if (fila.enfileirar(valor)) {
+        resultado.textContent = `Enfileirado: "${valor}"`;
+        valorInput.value = "";
+        atualizarTela();
+      } else {
+        resultado.textContent = "Erro: A fila está cheia! (Overflow)";
+      }
+    }
+
+    function executarDesenfileirar() {
+      const removido = fila.desenfileirar();
+      if (removido === null) {
+        resultado.textContent = "Erro: A fila está vazia! (Underflow)";
+      } else {
+        resultado.textContent = `Desenfileirado: "${removido}"`;
+        atualizarTela();
+      }
+    }
+
+    function executarPeek() {
+      const topo = fila.peek();
+      resultado.textContent = topo === null ? "Peek: Fila vazia." : `Peek: "${topo}"`;
+    }
+
+    function executarFront() {
+      const frente = fila.front();
+      resultado.textContent = frente === null ? "Front: Fila vazia." : `Front (início): "${frente}"`;
+    }
+
+    function executarRear() {
+      const fim = fila.rear();
+      resultado.textContent = fim === null ? "Rear: Fila vazia." : `Rear (fim): "${fim}"`;
+    }
+
+    function executarSize() {
+      resultado.textContent = `Size (tamanho): ${fila.size()} elemento(s)`;
+    }
+
+    function executarIsEmpty() {
+      resultado.textContent = `isEmpty (está vazia?): ${fila.isEmpty()}`;
+    }
+
+    function executarPrint() {
+      resultado.textContent = `Print: [ ${fila.print()} ]`;
+    }
+
+   
+    valorInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") executarEnfileirar();
+    });
+
+    atualizarTela();
+  </script>
+
+</body>
+</html>
